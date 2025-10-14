@@ -1,0 +1,11 @@
+apiVersion: config.ritsec.cloud/v1
+kind: Discord
+metadata:
+  labels:
+    app.kubernetes.io/name: scoob
+    app.kubernetes.io/managed-by: kustomize
+  name: discord-sample
+spec:
+  token: ""
+  channels:
+    log: ""

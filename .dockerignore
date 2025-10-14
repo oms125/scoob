@@ -11,5 +11,4 @@
 !go.sum
 
 #Bot token
-token
-config/samples/
+ignore/

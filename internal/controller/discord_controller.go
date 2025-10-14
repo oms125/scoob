@@ -18,7 +18,6 @@ package controller
 
 import (
 	"context"
-	"fmt"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -26,7 +25,6 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/go-logr/logr"
 	configv1 "scoob.ritsec.cloud/kubebuilder/api/v1"
 	"scoob.ritsec.cloud/kubebuilder/internal/bot"
 )
@@ -57,37 +55,25 @@ func (r *DiscordReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	var discList configv1.DiscordList
 
 	err := r.List(ctx, &discList)
-	log(err, logger, "Failed to fetch API list")
+	logger.Error(err, "Failed to fetch API list")
 
 	discToken := discList.Items[0].Spec.Token
 
-	fmt.Println("TOKEN: " + discToken)
-
 	discSession, err := discordgo.New("Bot " + discToken)
-	log(err, logger, "Failed to start Discord bot session")
+	logger.Error(err, "Failed to start Discord bot session")
 
 	discSession.Identify.Intents = discordgo.IntentsGuilds | discordgo.IntentsGuildMessages
 
 	err = discSession.Open()
-	log(err, logger, "Failed to open Discord bot session")
+	logger.Error(err, "Failed to open Discord bot session")
 
 	err = r.DiscordBotManager.SetSession(discSession)
-	log(err, logger, "Failed to set Discord bot Session")
+	logger.Error(err, "Failed to set Discord bot Session")
 
-	err = r.DiscordBotManager.SendMessage(discList.Items[0].Spec.Channels.LogChannel, "SCOOB has arrived!")
-	log(err, logger, "Failed to send Discord bot join message")
+	err = r.DiscordBotManager.SetLogChannel(discList.Items[0].Spec.Channels.LogChannel)
+	logger.Error(err, "Failed to set Discord bot log channel")
 
 	return ctrl.Result{}, nil
-}
-
-func log(err error, logger logr.Logger, s ...string) {
-	if err != nil {
-		if len(s) == 0 {
-			logger.Error(err, "")
-		} else {
-			logger.Error(err, s[0])
-		}
-	}
 }
 
 // SetupWithManager sets up the controller with the Manager.

@@ -32,5 +32,4 @@ go.work.sum
 # .vscode/
 
 #Bot token
-token
-config/samples/
+ignore/

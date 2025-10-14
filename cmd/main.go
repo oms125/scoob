@@ -23,6 +23,7 @@ import (
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
+	"github.com/go-logr/logr"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 
 	"k8s.io/apimachinery/pkg/runtime"
@@ -87,7 +88,13 @@ func main() {
 	opts.BindFlags(flag.CommandLine)
 	flag.Parse()
 
-	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
+	discBotManager := &bot.DiscordBotManager{}
+	botLogger := &bot.BotLogger{
+		Logger:            zap.New(zap.UseFlagOptions(&opts)).GetSink(),
+		DiscordBotManager: discBotManager,
+	}
+
+	ctrl.SetLogger(logr.New(botLogger))
 
 	// if the enable-http2 flag is false (the default), http/2 should be disabled
 	// due to its vulnerabilities. More specifically, disabling http/2 will
@@ -180,7 +187,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	discBotManager := &bot.DiscordBotManager{}
+	ctrl.SetLogger(logr.New(botLogger))
 
 	if err := mgr.Add(discBotManager); err != nil {
 		setupLog.Error(err, "unable to add bot manager as runnable")
