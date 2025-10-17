@@ -70,8 +70,10 @@ func (r *DiscordReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	err = r.DiscordBotManager.SetSession(discSession)
 	logger.Error(err, "Failed to set Discord bot Session")
 
-	err = r.DiscordBotManager.SetLogChannel(discList.Items[0].Spec.Channels.LogChannel)
-	logger.Error(err, "Failed to set Discord bot log channel")
+	r.DiscordBotManager.SetLogChannel(discList.Items[0].Spec.Channels.LogChannel)
+
+	err = r.DiscordBotManager.SendMessage("1", "Error Logging Test")
+	logger.Error(err, "Intentional Error; Error Logging Successful")
 
 	return ctrl.Result{}, nil
 }

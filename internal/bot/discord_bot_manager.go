@@ -37,24 +37,48 @@ func (d *DiscordBotManager) SetSession(session *discordgo.Session) error {
 	return nil
 }
 
-func (d *DiscordBotManager) SetLogChannel(logChannel string) error {
-	err := d.SendMessage(logChannel, "Logging Initialized Successfully")
-	if err != nil {
-		return errors.New("failed to initialize logging")
-	}
+func (d *DiscordBotManager) SetLogChannel(logChannel string) {
 	d.LogChannel = logChannel
-	return nil
+	d.LogInfo("Logging Initialized Successfully")
 }
 
 func (d *DiscordBotManager) LogInfo(msg string, keysAndValues ...interface{}) {
 	if d.LogChannel != "" {
-		_ = d.SendMessage(d.LogChannel, "```"+msg+"```")
+		_, _ = d.Session.ChannelMessageSendEmbed(
+			d.LogChannel,
+			&discordgo.MessageEmbed{
+				Title: "Info Log",
+				Color: 0x13f737,
+				Fields: []*discordgo.MessageEmbedField{
+					{
+						Name:  "Message",
+						Value: msg,
+					},
+				},
+			},
+		)
 	}
 }
 
 func (d *DiscordBotManager) LogError(err error, msg string, keysAndValues ...interface{}) {
 	if d.LogChannel != "" {
-		_ = d.SendMessage(d.LogChannel, "```"+err.Error()+msg+"```")
+		_, _ = d.Session.ChannelMessageSendEmbed(
+			d.LogChannel,
+			&discordgo.MessageEmbed{
+				Title: "Error Log",
+				Color: 0xf71414,
+				Fields: []*discordgo.MessageEmbedField{
+					{
+						Name:  "Message",
+						Value: msg,
+					},
+					{
+						Name:  "Error",
+						Value: err.Error(),
+					},
+				},
+			},
+		)
 	}
 }
 

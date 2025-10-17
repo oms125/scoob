@@ -24,8 +24,11 @@ func (b *BotLogger) Info(level int, msg string, keysAndValues ...interface{}) {
 }
 
 func (b *BotLogger) Error(err error, msg string, keysAndValues ...interface{}) {
+	if err != nil {
+		b.DiscordBotManager.LogError(err, msg, keysAndValues...)
 
-	b.Logger.Error(err, msg, keysAndValues...)
+		b.Logger.Error(err, msg, keysAndValues...)
+	}
 }
 
 func (b *BotLogger) WithValues(keysAndValues ...interface{}) logr.LogSink {
