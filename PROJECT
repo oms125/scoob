@@ -18,4 +18,9 @@ resources:
   kind: Discord
   path: scoob.ritsec.cloud/kubebuilder/api/v1
   version: v1
+- controller: true
+  domain: ritsec.cloud
+  group: logging
+  kind: IngressLog
+  version: v1
 version: "3"

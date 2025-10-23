@@ -30,3 +30,29 @@ rules:
   - get
   - patch
   - update
+- apiGroups:
+  - logging.ritsec.cloud
+  resources:
+  - ingresslogs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - logging.ritsec.cloud
+  resources:
+  - ingresslogs/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - logging.ritsec.cloud
+  resources:
+  - ingresslogs/status
+  verbs:
+  - get
+  - patch
+  - update
